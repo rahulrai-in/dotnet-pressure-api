@@ -9,9 +9,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/PressureApi/bin/Debug/net6.0/PressureApi.dll",
+            "program": "${workspaceFolder}/api/bin/Debug/net6.0/PressureApi.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/PressureApi",
+            "cwd": "${workspaceFolder}/api",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",
