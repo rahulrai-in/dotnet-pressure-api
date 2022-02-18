@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pressure-api-deployment
+spec:
+  selector:
+    matchLabels:
+      app: pressure-api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pressure-api
+    spec:
+      containers:
+        - name: pressure-api
+          image: ghcr.io/rahulrai-in/dotnet-pressure-api:latest
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 200m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pressure-api-service
+  labels:
+    run: php-apache
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: pressure-api
