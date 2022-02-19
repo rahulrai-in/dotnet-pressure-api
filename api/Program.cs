@@ -16,14 +16,22 @@ if (app.Environment.IsDevelopment())
 app.MapPost("/memory/{numMegaBytes}/duration/{durationSec}", (long numMegaBytes, int durationSec) =>
     {
         // ReSharper disable once CollectionNeverQueried.Local
-        List<XmlNode> memList = new();
-        while (GC.GetTotalMemory(false) <= numMegaBytes * 1000 * 1000)
+        try
         {
-            XmlDocument doc = new();
-            for (var i = 0; i < 1000000; i++)
+            List<XmlNode> memList = new();
+            while (GC.GetTotalMemory(false) <= numMegaBytes * 1000 * 1000)
             {
-                memList.Add(doc.CreateNode(XmlNodeType.Element, "node", string.Empty));
+                XmlDocument doc = new();
+                for (var i = 0; i < 1000000; i++)
+                {
+                    memList.Add(doc.CreateNode(XmlNodeType.Element, "node", string.Empty));
+                }
             }
+        }
+        // WAit if memory is not available
+        catch (OutOfMemoryException ex)
+        {
+            Console.WriteLine(ex);
         }
 
         Thread.Sleep(TimeSpan.FromSeconds(durationSec));

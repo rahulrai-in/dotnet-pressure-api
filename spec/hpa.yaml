@@ -1,4 +1,4 @@
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: pressure-api-hpa
@@ -13,4 +13,6 @@ spec:
     - type: Resource
       resource:
         name: memory
-        targetAverageUtilization: 80
+        target:
+          type: Utilization
+          averageUtilization: 40

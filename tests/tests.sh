@@ -1,6 +1,9 @@
+#Win: set KUBECONFIG=D:\Projects\dotnet-pressure-api\tests\my-linode-cluster-kubeconfig.yaml
+#Shell KUBECONFIG=...
+
 # HPA test: Install HPA and execute the following commands
 
-kubectl run -i --tty mem-load-gen --rm --image=busybox --restart=Never -- /bin/sh -c "wget -q -O- http://pressure-api-service//memory/2000/duration/180"
+kubectl run -i --tty mem-load-gen --rm --image=busybox --restart=Never -- /bin/sh -c "wget -q -O- --post-data= http://pressure-api-service/memory/2000/duration/60"
 
 kubectl get hpa pressure-api-hpa --watch
 
