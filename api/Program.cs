@@ -16,9 +16,10 @@ if (app.Environment.IsDevelopment())
 app.MapPost("/memory/{numMegaBytes}/duration/{durationSec}", (long numMegaBytes, int durationSec) =>
     {
         // ReSharper disable once CollectionNeverQueried.Local
+        List<XmlNode> memList = new();
+
         try
         {
-            List<XmlNode> memList = new();
             while (GC.GetTotalMemory(false) <= numMegaBytes * 1000 * 1000)
             {
                 XmlDocument doc = new();
@@ -28,32 +29,40 @@ app.MapPost("/memory/{numMegaBytes}/duration/{durationSec}", (long numMegaBytes,
                 }
             }
         }
-        // Wait if memory is not available
+        // Don't fail if memory is not available
         catch (OutOfMemoryException ex)
         {
             Console.WriteLine(ex);
         }
 
         Thread.Sleep(TimeSpan.FromSeconds(durationSec));
+        memList.Clear();
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
         return Results.Ok();
     })
     .WithName("LoadMemory");
 
 app.MapPost("/cpu/{threads}/duration/{durationSec}", (int threads, int durationSec) =>
     {
+        CancellationTokenSource cts = new();
         for (var counter = 0; counter < threads; counter++)
         {
-            var burnThread = new Thread(() =>
+            ThreadPool.QueueUserWorkItem(tokenIn =>
             {
-                while (true)
+#pragma warning disable CS8605 // Unboxing a possibly null value.
+                var token = (CancellationToken)tokenIn;
+#pragma warning restore CS8605 // Unboxing a possibly null value.
+                while (!token.IsCancellationRequested)
                 {
                 }
-                // ReSharper disable once FunctionNeverReturns
-            });
-            burnThread.Start();
+            }, cts.Token);
         }
 
         Thread.Sleep(TimeSpan.FromSeconds(durationSec));
+        cts.Cancel();
+        Thread.Sleep(TimeSpan.FromSeconds(2));
+        cts.Dispose();
         return Results.Ok();
     })
     .WithName("LoadCPU");
