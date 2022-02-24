@@ -15,4 +15,4 @@ spec:
         name: memory
         target:
           type: Utilization
-          averageUtilization: 40
+          averageUtilization: 50

@@ -1,0 +1,8 @@
+config:
+  ladder:
+    nodesToReplicas:
+      - [1, 3]
+      - [2, 5]
+options:
+  namespace: default
+  target: "deployment/pressure-api-deployment"

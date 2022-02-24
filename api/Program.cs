@@ -28,7 +28,7 @@ app.MapPost("/memory/{numMegaBytes}/duration/{durationSec}", (long numMegaBytes,
                 }
             }
         }
-        // WAit if memory is not available
+        // Wait if memory is not available
         catch (OutOfMemoryException ex)
         {
             Console.WriteLine(ex);

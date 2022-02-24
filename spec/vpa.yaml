@@ -1,24 +1,22 @@
-apiVersion: autoscaling/v1
+apiVersion: "autoscaling.k8s.io/v1"
 kind: VerticalPodAutoscaler
 metadata:
   name: pressure-api-vpa
 spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
+  targetRef:
+    apiVersion: "apps/v1"
     kind: Deployment
     name: pressure-api-deployment
   updatePolicy:
     updateMode: Recreate
   resourcePolicy:
     containerPolicies:
-      - containerName: pressure-api
-        controlledResources:
-          - resource:
-              - cpu
-              - memory
-            minimum:
-              cpu: 100m
-              memory: 50Mi
-            maximum:
-              cpu: 1
-              memory: 500Mi
+      - containerName: "*"
+        minAllowed:
+          cpu: 0m
+          memory: 0Mi
+        maxAllowed:
+          cpu: 1
+          memory: 2000Mi
+        controlledResources: ["cpu", "memory"]
+        controlledValues: RequestsAndLimits
